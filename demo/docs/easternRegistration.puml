@@ -56,7 +56,7 @@ record Term {
 'Aggregation and composition
 MeetingFaculty "1" o-- "1" MeetingTime : has a >
 Course "1" 0-- "0*" MeetingFaculty: has a >
-Course "1" 0-- "0*" Faculty: taught by >
+Course "1" 0-- "1*" Faculty: taught by >
 
 'Dependencies
 EasternSchedule ..> Term : uses
