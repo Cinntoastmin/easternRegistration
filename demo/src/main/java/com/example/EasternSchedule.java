@@ -16,6 +16,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -121,7 +122,7 @@ public class EasternSchedule {
      * @throws IOException
      */
     private ArrayList<Course> parseCourses(String content) throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
+        ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
         JsonNode dataNode = mapper.readTree(content).get("data");        
         ArrayList<Course> courses = mapper.convertValue(dataNode, new TypeReference<ArrayList<Course>>() {});
         return courses;
