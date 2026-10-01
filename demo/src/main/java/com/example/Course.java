@@ -10,9 +10,11 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
  * @param subject the course subject
  * @param courseNumber the course number
  * @param meetingsFaculty a list of meetingFaculty objects (see @link com.example.MeetingFaculty)
+ * @param faculty a list of faculty members who teach the course
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public record Course(String id, String subject, String courseNumber, List<MeetingFaculty> meetingsFaculty) {
+public record Course(String id, String subject, String courseNumber, List<MeetingFaculty> meetingsFaculty,
+                     List<Faculty> faculty) {
 
     /**
      * 
