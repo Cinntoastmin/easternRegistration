@@ -1,0 +1,8 @@
+@startuml MainMenu
+
+class MainMenu {
+    - 
+}
+
+
+@enduml

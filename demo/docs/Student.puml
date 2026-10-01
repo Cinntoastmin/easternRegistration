@@ -1,0 +1,12 @@
+@startuml Student
+
+class Student {
+    -{static} MAX_CREDITS: int = 17
+    -ID: int
+    -firstName: String 
+    -lastname: String 
+    -Classes: ArrayList<Course>
+}
+
+
+@enduml

@@ -25,6 +25,13 @@ record Course {
   -subject: String
   -courseNumber: String
   -meetingsFaculty: List<MeetingFaculty>
+  -faculty: List<Faculty>
+}
+
+record Faculty {
+  -displayName: String
+  -emailAddress: String
+  -bannerId: String
 }
 
 record MeetingFaculty {
@@ -49,6 +56,7 @@ record Term {
 'Aggregation and composition
 MeetingFaculty "1" o-- "1" MeetingTime : has a >
 Course "1" 0-- "0*" MeetingFaculty: has a >
+Course "1" 0-- "0*" Faculty: taught by >
 
 'Dependencies
 EasternSchedule ..> Term : uses
