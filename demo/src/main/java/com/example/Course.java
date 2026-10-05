@@ -2,7 +2,10 @@ package com.example;
 
 import java.util.List;
 import java.util.HashMap;
+import java.time.LocalTime;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Course record to store select course information
@@ -44,9 +47,13 @@ public record Course(String id, String subject, String courseNumber, List<Meetin
      * @param friday true if meeting time is on this day; false otherwise
      * @param saturday true if meeting time is on this day; false otherwise
      * @param sunday true if meeting time is on this day; false otherwise
+      * @param startTime the meeting start time
+      * @param endTime the meeting end time
      */
     @JsonIgnoreProperties(ignoreUnknown = true)
     public record MeetingTime(
+          @JsonProperty("beginTime") @JsonFormat(pattern = "HHmm") LocalTime startTime,
+          @JsonFormat(pattern = "HHmm") LocalTime endTime,
         boolean monday, boolean tuesday, boolean wednesday,
         boolean thursday, boolean friday, boolean saturday, boolean sunday
     ){
