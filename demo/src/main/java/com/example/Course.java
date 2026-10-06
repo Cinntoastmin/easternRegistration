@@ -1,8 +1,9 @@
 package com.example;
 
 import java.util.List;
-import java.util.HashMap;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -47,8 +48,8 @@ public record Course(String id, String subject, String courseNumber, List<Meetin
      * @param friday true if meeting time is on this day; false otherwise
      * @param saturday true if meeting time is on this day; false otherwise
      * @param sunday true if meeting time is on this day; false otherwise
-      * @param startTime the meeting start time
-      * @param endTime the meeting end time
+     * @param startTime the meeting start time
+     * @param endTime the meeting end time
      */
     @JsonIgnoreProperties(ignoreUnknown = true)
     public record MeetingTime(
@@ -63,12 +64,28 @@ public record Course(String id, String subject, String courseNumber, List<Meetin
         */
         @Override 
         public String toString() {
-           
-            // TO DO: this should return a reasonable representation of 
-            // a meeting time (e.g., 12:00 - 12:50 PM, MWF)
-            HashMap<String, Boolean> daysMap = new HashMap<String, Boolean>();
-            daysMap.put("M", monday);
-            return daysMap.toString();            
+            StringBuilder days = new StringBuilder();
+            if (monday) days.append("M");
+            if (tuesday) days.append("T");
+            if (wednesday) days.append("W");
+            if (thursday) days.append("R");
+            if (friday) days.append("F");
+            if (saturday) days.append("S");
+            if (sunday) days.append("U");
+
+            DateTimeFormatter timeFormat = DateTimeFormatter.ofPattern("h:mm", Locale.US);
+            DateTimeFormatter periodFormat = DateTimeFormatter.ofPattern("a", Locale.US);
+            String start = startTime.format(timeFormat);
+            String end = endTime.format(timeFormat);
+            String startPeriod = startTime.format(periodFormat);
+            String endPeriod = endTime.format(periodFormat);
+
+            if (!startPeriod.equals(endPeriod)) {
+                start += " " + startPeriod;
+            }
+            end += " " + endPeriod;
+
+            return start + " - " + end + ", " + days;
 
         }
     }; 
