@@ -30,8 +30,6 @@ record Course {
 
 record Faculty {
   -displayName: String
-  -emailAddress: String
-  -bannerId: String
 }
 
 record MeetingFaculty {

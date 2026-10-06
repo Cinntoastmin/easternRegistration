@@ -96,7 +96,7 @@ public record Course(String id, String subject, String courseNumber, List<Meetin
      */
     @Override 
      public String toString() {
-        return subject + "-" + courseNumber;
+        return subject + "-" + courseNumber ;
     }
 }
     
