@@ -19,7 +19,6 @@ record Course {
     -subject: String
     -courseNumber: String
     -title: String
-    -credits: int
     -meetingsFaculty: List<MeetingFaculty>
 }
 
@@ -30,6 +29,7 @@ record MeetingFaculty {
 record MeetingTime {
     -startTime: LocalTime
     -endTime: LocalTime
+    -creditHourSession: double
     -monday: boolean
     -tuesday: boolean
     -wednesday: boolean

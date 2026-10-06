@@ -39,6 +39,7 @@ record MeetingFaculty {
 record MeetingTime {
   -startTime: LocalTime
   -endTime: LocalTime
+  -creditHourSession: double
   -monday: boolean
   -tuesday: boolean
   -wednesday: boolean
