@@ -51,11 +51,13 @@ public record Course(String id, String subject, String courseNumber, List<Meetin
      * @param sunday true if meeting time is on this day; false otherwise
      * @param startTime the meeting start time
      * @param endTime the meeting end time
+     * @param creditHourSession the credit hours associated with the meeting session
      */
     @JsonIgnoreProperties(ignoreUnknown = true)
     public record MeetingTime(
           @JsonProperty("beginTime") @JsonFormat(pattern = "HHmm") LocalTime startTime,
           @JsonFormat(pattern = "HHmm") LocalTime endTime,
+        double creditHourSession,
         boolean monday, boolean tuesday, boolean wednesday,
         boolean thursday, boolean friday, boolean saturday, boolean sunday
     ){
@@ -120,4 +122,3 @@ public record Course(String id, String subject, String courseNumber, List<Meetin
     
 
    
-
