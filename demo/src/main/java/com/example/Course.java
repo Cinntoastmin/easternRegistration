@@ -4,6 +4,7 @@ import java.util.List;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
+import java.util.stream.Collectors;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -96,7 +97,24 @@ public record Course(String id, String subject, String courseNumber, List<Meetin
      */
     @Override 
      public String toString() {
-        return subject + "-" + courseNumber ;
+        StringBuilder sb = new StringBuilder();
+        sb.append(subject).append("-").append(courseNumber);
+
+        if (meetingsFaculty != null && !meetingsFaculty.isEmpty()) {
+            String meetings = meetingsFaculty.stream()
+                .map(Object::toString)
+                .collect(Collectors.joining(", "));
+            sb.append(" | ").append(meetings);
+        }
+
+        if (faculty != null && !faculty.isEmpty()) {
+            String facultyNames = faculty.stream()
+                .map(Faculty::displayName)
+                .collect(Collectors.joining(", "));
+            sb.append(" | ").append(facultyNames);
+        }
+
+        return sb.toString();
     }
 }
     

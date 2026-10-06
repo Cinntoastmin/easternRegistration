@@ -8,4 +8,9 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public record Faculty(String displayName) {
+
+    @Override
+    public String toString(){
+        return displayName;
+    }
 }
