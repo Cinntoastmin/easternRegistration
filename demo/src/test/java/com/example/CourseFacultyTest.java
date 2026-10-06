@@ -53,4 +53,29 @@ public class CourseFacultyTest {
 
         assertEquals(3.0, course.meetingsFaculty().get(0).meetingTime().creditHourSession(), 0.0);
     }
+
+    @Test
+    public void includesCreditHourSessionBeforeMeetingTimes() throws Exception {
+        String json = """
+                {
+                  "meetingsFaculty": [
+                    {
+                      "meetingTime": {
+                        "beginTime": "1100",
+                        "endTime": "1150",
+                        "creditHourSession": 3.0,
+                        "monday": true
+                      }
+                    }
+                  ]
+                }
+                """;
+
+        Course course = new ObjectMapper()
+                .registerModule(new JavaTimeModule())
+                .readValue(json, Course.class);
+
+        assertEquals("3.0 | 11:00 - 11:50 AM, M",
+                course.meetingsFaculty().get(0).meetingTime().toString());
+    }
 }

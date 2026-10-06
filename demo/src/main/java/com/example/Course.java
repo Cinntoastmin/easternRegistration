@@ -88,7 +88,7 @@ public record Course(String id, String subject, String courseNumber, List<Meetin
             }
             end += " " + endPeriod;
 
-            return start + " - " + end + ", " + days;
+            return creditHourSession + " | " + start + " - " + end + ", " + days;
 
         }
     }; 
