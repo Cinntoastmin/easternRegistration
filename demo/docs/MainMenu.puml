@@ -1,8 +1,52 @@
 @startuml MainMenu
+skinparam classAttributeIconSize 0
+hide circle
 
 class MainMenu {
-    - 
+    -schedule: EasternSchedule
+    --
+    +MainMenu(schedule: EasternSchedule)
+    +run(): void
+    -displayCoursesBySubject(subject: String): void
+    -formatCourse(course: Course): String
 }
 
+class EasternSchedule {
+    +queryCourseBySubject(subject: String): ArrayList<Course>
+}
+
+record Course {
+    -subject: String
+    -courseNumber: String
+    -title: String
+    -credits: int
+    -meetingsFaculty: List<MeetingFaculty>
+}
+
+record MeetingFaculty {
+    -meetingTime: MeetingTime
+}
+
+record MeetingTime {
+    -startTime: LocalTime
+    -endTime: LocalTime
+    -monday: boolean
+    -tuesday: boolean
+    -wednesday: boolean
+    -thursday: boolean
+    -friday: boolean
+    -saturday: boolean
+    -sunday: boolean
+}
+
+MainMenu ..> EasternSchedule : queries courses by subject
+MainMenu ..> Course : formats and displays
+Course "1" o-- "0..*" MeetingFaculty : has meetings
+MeetingFaculty "1" *-- "1" MeetingTime : describes
+
+note right of Course
+  Display each course with subject, number,
+  credits, title, and every meeting's days and times.
+end note
 
 @enduml
