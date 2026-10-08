@@ -27,6 +27,7 @@ record Course {
   -meetingsFaculty: List<MeetingFaculty>
   -faculty: List<Faculty>
   -sequenceNumber: int
+  -courseTitle: String
 }
 
 record Faculty {

@@ -16,6 +16,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * @param courseNumber the course number
  * @param meetingsFaculty a list of meetingFaculty objects (see @link com.example.MeetingFaculty)
  * @param faculty a list of faculty members who teach the course
+ * @param sequenceNumber the section number of the course
+ * @param courseTitle the name of the course
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public record Course(
@@ -24,7 +26,8 @@ public record Course(
     String courseNumber, 
     List<MeetingFaculty> meetingsFaculty,
     List<Faculty> faculty,
-    int sequenceNumber) {
+    int sequenceNumber,
+    String courseTitle) {
 
     /**
      * 
@@ -106,6 +109,7 @@ public record Course(
      public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(subject).append("-").append(courseNumber).append("-").append(sequenceNumber);
+        sb.append(" " + courseTitle);
 
         if (meetingsFaculty != null && !meetingsFaculty.isEmpty()) {
             String meetings = meetingsFaculty.stream()
