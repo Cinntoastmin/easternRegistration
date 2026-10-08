@@ -18,8 +18,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * @param faculty a list of faculty members who teach the course
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public record Course(String id, String subject, String courseNumber, List<MeetingFaculty> meetingsFaculty,
-                     List<Faculty> faculty) {
+public record Course(
+    String id, 
+    String subject,
+    String courseNumber, 
+    List<MeetingFaculty> meetingsFaculty,
+    List<Faculty> faculty,
+    int sequenceNumber) {
 
     /**
      * 
@@ -55,8 +60,8 @@ public record Course(String id, String subject, String courseNumber, List<Meetin
      */
     @JsonIgnoreProperties(ignoreUnknown = true)
     public record MeetingTime(
-          @JsonProperty("beginTime") @JsonFormat(pattern = "HHmm") LocalTime startTime,
-          @JsonFormat(pattern = "HHmm") LocalTime endTime,
+        @JsonProperty("beginTime") @JsonFormat(pattern = "HHmm") LocalTime startTime,
+        @JsonFormat(pattern = "HHmm") LocalTime endTime,
         double creditHourSession,
         boolean monday, boolean tuesday, boolean wednesday,
         boolean thursday, boolean friday, boolean saturday, boolean sunday
@@ -88,7 +93,7 @@ public record Course(String id, String subject, String courseNumber, List<Meetin
             }
             end += " " + endPeriod;
 
-            return creditHourSession + " | " + start + " - " + end + ", " + days;
+            return creditHourSession + " credits" + " | " + start + " - " + end + ", " + days;
 
         }
     }; 
@@ -100,7 +105,7 @@ public record Course(String id, String subject, String courseNumber, List<Meetin
     @Override 
      public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append(subject).append("-").append(courseNumber);
+        sb.append(subject).append("-").append(courseNumber).append("-").append(sequenceNumber);
 
         if (meetingsFaculty != null && !meetingsFaculty.isEmpty()) {
             String meetings = meetingsFaculty.stream()
