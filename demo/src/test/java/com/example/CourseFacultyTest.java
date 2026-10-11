@@ -75,7 +75,7 @@ public class CourseFacultyTest {
                 .registerModule(new JavaTimeModule())
                 .readValue(json, Course.class);
 
-        assertEquals("3.0 credits | 11:00 - 11:50 AM, M",
+        assertEquals("3.0 | 11:00 - 11:50 AM, M",
                 course.meetingsFaculty().get(0).meetingTime().toString());
     }
 }
