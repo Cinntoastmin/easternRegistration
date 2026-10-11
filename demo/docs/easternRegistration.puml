@@ -20,6 +20,15 @@ class EasternSchedule {
   +queryCourseBySubject(subject: String): ArrayList<Course>
 }
 
+class MainMenu {
+    -schedule: EasternSchedule
+    --
+    +MainMenu(schedule: EasternSchedule)
+    +run(): void
+    -displayCoursesBySubject(subject: String): void
+    -formatCourse(course: Course): String
+}
+
 record Course {
   -id : String
   -subject: String
@@ -60,6 +69,8 @@ record Term {
 MeetingFaculty "1" o-- "1" MeetingTime : has a >
 Course "1" 0-- "0*" MeetingFaculty: has a >
 Course "1" 0-- "1*" Faculty: taught by >
+MainMenu ..> EasternSchedule : queries courses by subject
+MainMenu ..> Course : formats and displays
 
 'Dependencies
 EasternSchedule ..> Term : uses

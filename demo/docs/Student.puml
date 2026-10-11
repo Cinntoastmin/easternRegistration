@@ -6,6 +6,10 @@ class Student {
     -firstName: String 
     -lastname: String 
     -Classes: ArrayList<Course>
+    --
+    +addCourse(courses: Course[]): boolean
+    +dropCourse(course: Course): boolean
+    +displayClasses(): void
 }
 
 
