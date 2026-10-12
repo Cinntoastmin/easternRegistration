@@ -29,6 +29,31 @@ class MainMenu {
     -formatCourse(course: Course): String
 }
 
+class Student {
+  -{static} MAX_CREDITS: int = 17
+  -id: int
+  -firstName: String
+  -lastName: String
+  -courses: ArrayList<Course>
+  --
+  +Student()
+  +Student(id: int, firstName: String, lastName: String)
+  +getId(): int
+  +setId(id: int): void
+  +getFirstName(): String
+  +setFirstName(firstName: String): void
+  +getLastName(): String
+  +setLastName(lastName: String): void
+  +getCourses(): ArrayList<Course>
+  +setCourses(courses: ArrayList<Course>): void
+  +addCourse(course: Course): boolean
+  +addCourses(courses: Course[]): boolean
+  +dropCourse(course: Course): boolean
+  +dropCourses(courses: Course[]): boolean
+  +dropAllCourses(): void
+  +displayCourses(): void
+}
+
 record Course {
   -id : String
   -subject: String
@@ -69,8 +94,10 @@ record Term {
 MeetingFaculty "1" o-- "1" MeetingTime : has a >
 Course "1" 0-- "0*" MeetingFaculty: has a >
 Course "1" 0-- "1*" Faculty: taught by >
+Student "1" *-- "0*" Course : enrolls in >
 MainMenu ..> EasternSchedule : queries courses by subject
 MainMenu ..> Course : formats and displays
+Student ..> Course : adds and drops
 
 'Dependencies
 EasternSchedule ..> Term : uses
