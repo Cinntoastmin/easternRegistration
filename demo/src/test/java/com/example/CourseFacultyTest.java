@@ -1,6 +1,7 @@
 package com.example;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -15,6 +16,8 @@ public class CourseFacultyTest {
                   "id": "103267",
                   "subject": "CSC",
                   "courseNumber": "101",
+                  "maximumEnrollment": 20,
+                  "enrollment": 20,
                   "faculty": [
                     {
                       "displayName": "Bondok, Atef",
@@ -29,6 +32,9 @@ public class CourseFacultyTest {
 
         assertEquals(1, course.faculty().size());
         assertEquals("Bondok, Atef", course.faculty().get(0).displayName());
+        assertEquals(20, course.maximumEnrollment());
+        assertEquals(20, course.enrollment());
+        assertTrue(course.isFull());
     }
 
     @Test
