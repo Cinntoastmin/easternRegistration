@@ -12,29 +12,86 @@ import java.util.Scanner;
 public class MainMenu {
     private static final Scanner INPUT = new Scanner(System.in);
     private final EasternSchedule schedule;
+    private Student currStudent;
 
     public MainMenu(EasternSchedule schedule) {
         this.schedule = Objects.requireNonNull(schedule, "schedule");
     }
 
     public void run() throws Exception {
+        System.out.println("Welcome to the Eastern Registration System");
         while (true) {
-            System.out.print("Enter a subject code to view courses (or Q to quit): ");
-            if (!INPUT.hasNextLine()) {
+            System.out.print("would you like to 'view' courses (type 'view'), or 'setup' your schedule? (type setup)");
+
+            if (!INPUT.hasNextLine()){
                 return;
             }
 
-            String subject = INPUT.nextLine().trim();
-            if (subject.equalsIgnoreCase("q")) {
-                return;
+            String selection = INPUT.nextLine().trim();
+            if (selection.equalsIgnoreCase("view")){
+                viewCourses();
             }
-            if (subject.isEmpty()) {
-                System.out.println("Please enter a subject code.");
-                continue;
+            if (selection.equalsIgnoreCase("setup")){
+                if(currStudent == null){
+                    setStudent(createStudent());
+                }
+                addCourses();
             }
-
-            displayCoursesBySubject(subject);
         }
+    }
+
+    
+    private void setStudent(Student s){
+        this.currStudent = s;
+    }
+
+    public void viewCourses() throws Exception{
+        System.out.print("Enter a subject code to view courses (or Q to quit): ");
+        if (!INPUT.hasNextLine()) {
+            return;
+        }
+
+        String subject = INPUT.nextLine().trim();
+        if (subject.equalsIgnoreCase("q")) {
+            return;
+        }
+        if (subject.isEmpty()) {
+            System.out.println("Please enter a subject code.");
+            
+        }
+
+        displayCoursesBySubject(subject);
+    }
+
+    public Student createStudent(){
+        System.out.println("It looks like this is the first time you've setup a schedule this session");
+        System.out.print("please enter your student ID:");
+
+        if(!INPUT.hasNextLine()){
+            System.out.println("please enter an ID");
+        }
+
+        String sID = INPUT.nextLine().trim();
+
+        System.out.println();
+        System.out.print("please enter your first name:");
+
+        if(!INPUT.hasNextLine()){
+            System.out.println("please enter your first name");
+        }
+
+        String sFirstName = INPUT.nextLine().trim();
+        
+        System.out.println();
+        System.out.print("please enter your last name:");
+
+        if(!INPUT.hasNextLine()){
+            System.out.println("please enter a last name");
+        }
+
+        String sLastName = INPUT.nextLine().trim();
+
+        return new Student(sID, sFirstName, sLastName);
     }
 
     private void displayCoursesBySubject(String subject) throws Exception {
@@ -46,6 +103,46 @@ public class MainMenu {
 
         for (Course course : courses) {
             System.out.println(formatCourse(course));
+        }
+    }
+
+    public void addCourses() throws Exception {
+        if (currStudent == null) {
+            System.out.println("Please set up a student before adding courses.");
+            return;
+        }
+
+        ArrayList<Course> availableCourses = schedule.queryCourseBySubject("");
+        while (true) {
+            System.out.print("Enter a course ID to add (or Q to finish): ");
+            if (!INPUT.hasNextLine()) {
+                return;
+            }
+
+            String courseId = INPUT.nextLine().trim();
+            if (courseId.equalsIgnoreCase("q")) {
+                return;
+            }
+            if (courseId.isEmpty()) {
+                System.out.println("Please enter a course ID.");
+                continue;
+            }
+
+            Course course = availableCourses.stream()
+                    .filter(Objects::nonNull)
+                    .filter(availableCourse -> courseId.equals(availableCourse.id()))
+                    .findFirst()
+                    .orElse(null);
+
+            if (course == null) {
+                System.out.println("No course found with ID " + courseId + ".");
+            } else if (currStudent.addCourse(course)) {
+                System.out.println("Added " + course + " to your schedule.");
+            } else {
+                System.out.println("Could not add " + courseId
+                        + ". It may already be scheduled, full, exceed the credit limit, "
+                        + "or conflict with another course.");
+            }
         }
     }
 

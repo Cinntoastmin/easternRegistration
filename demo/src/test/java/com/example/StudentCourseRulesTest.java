@@ -29,7 +29,7 @@ public class StudentCourseRulesTest {
 
     @Test
     public void studentRejectsCourseWithConflictingMeeting() {
-        Student student = new Student(1, "Ada", "Lovelace");
+        Student student = new Student("1", "Ada", "Lovelace");
         Course first = course(meeting(9, 0, 9, 50, 3.0, true, false));
         Course overlapping = course(meeting(9, 30, 10, 20, 3.0, true, false));
 
@@ -48,7 +48,7 @@ public class StudentCourseRulesTest {
 
     @Test
     public void studentRejectsFullCourse() {
-        Student student = new Student(1, "Ada", "Lovelace");
+        Student student = new Student("1", "Ada", "Lovelace");
         Course full = new Course("1", "CSC", "101", List.of(), List.of(), "1", "Test Course", 20, 20);
 
         assertFalse(student.addCourse(full));
