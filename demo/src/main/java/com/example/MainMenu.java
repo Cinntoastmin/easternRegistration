@@ -143,8 +143,7 @@ public class MainMenu {
      * 
      * @param subject the three letter course subject code
      * 
-     * @throws Exception handling from used method
-     * @see queryCourseBySubject
+     * @throws Exception if the course query fails
      */
     private void displayCoursesBySubject(String subject) throws Exception {
         ArrayList<Course> courses = schedule.queryCourseBySubject(subject);
@@ -185,8 +184,7 @@ public class MainMenu {
     /**
      * lets the user attempt to add any number of courses to their schedule
      * 
-     * @throws Exception from queryCourseBySubject
-     * @see queryCourseBySubject
+     * @throws Exception if the course query fails
      */
     public void addCourses() throws Exception {
         if (currStudent == null) {
@@ -262,13 +260,18 @@ public class MainMenu {
 
         while (true) {
             System.out.print("Enter a course as Subject-CourseNumber-section "
-                    + "(for example CSC-450-01), or Q to finish: ");
+                    + "(for example CSC-450-01), ALL to drop all courses, or Q to finish: ");
             if (!INPUT.hasNextLine()) {
                 return;
             }
 
             String courseCode = INPUT.nextLine().trim();
             if (courseCode.equalsIgnoreCase("q")) {
+                return;
+            }
+            if (courseCode.equalsIgnoreCase("all")) {
+                currStudent.dropAllCourses();
+                System.out.println("Dropped all courses from your schedule.");
                 return;
             }
 
