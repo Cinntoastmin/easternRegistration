@@ -21,7 +21,7 @@ public class MainMenu {
     public void run() throws Exception {
         System.out.println("Welcome to the Eastern Registration System");
         while (true) {
-            System.out.print("would you like to 'view' courses (type 'view'), or 'setup' your schedule? (type setup)");
+            System.out.print("would you like to 'view' courses (type 'view'), or 'setup' your schedule? (type setup)? ");
 
             if (!INPUT.hasNextLine()){
                 return;
@@ -112,34 +112,45 @@ public class MainMenu {
             return;
         }
 
-        ArrayList<Course> availableCourses = schedule.queryCourseBySubject("");
         while (true) {
-            System.out.print("Enter a course ID to add (or Q to finish): ");
+            System.out.print("Enter a course as Subject-CourseNumber-section"
+                    + "(for example CSC-450-01), or Q to finish: ");
             if (!INPUT.hasNextLine()) {
                 return;
             }
 
-            String courseId = INPUT.nextLine().trim();
-            if (courseId.equalsIgnoreCase("q")) {
+            String courseCode = INPUT.nextLine().trim();
+            if (courseCode.equalsIgnoreCase("q")) {
                 return;
             }
-            if (courseId.isEmpty()) {
-                System.out.println("Please enter a course ID.");
+            String[] parts = courseCode.split("-", -1);
+            if (parts.length != 3
+                    || parts[0].isBlank()
+                    || parts[1].isBlank()
+                    || parts[2].isBlank()) {
+                System.out.println("Please use the format subject-courseNumber-sequenceNumber, "
+                        + "for example CSC-450-01.");
                 continue;
             }
 
+            String subject = parts[0].trim();
+            String courseNumber = parts[1].trim();
+            String sequenceNumber = parts[2].trim();
+            ArrayList<Course> availableCourses = schedule.queryCourseBySubject(subject);
             Course course = availableCourses.stream()
                     .filter(Objects::nonNull)
-                    .filter(availableCourse -> courseId.equals(availableCourse.id()))
+                    .filter(availableCourse -> subject.equalsIgnoreCase(availableCourse.subject())
+                            && courseNumber.equalsIgnoreCase(availableCourse.courseNumber())
+                            && sequenceNumber.equalsIgnoreCase(availableCourse.sequenceNumber()))
                     .findFirst()
                     .orElse(null);
 
             if (course == null) {
-                System.out.println("No course found with ID " + courseId + ".");
+                System.out.println("No course found for " + courseCode + ".");
             } else if (currStudent.addCourse(course)) {
                 System.out.println("Added " + course + " to your schedule.");
             } else {
-                System.out.println("Could not add " + courseId
+                System.out.println("Could not add " + courseCode
                         + ". It may already be scheduled, full, exceed the credit limit, "
                         + "or conflict with another course.");
             }
