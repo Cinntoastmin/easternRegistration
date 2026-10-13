@@ -1,0 +1,6 @@
+Create a Student class that allows a student to add and drop courses  
+    - Create a student by specifying an ID, a first name, and last name.  [10 points] 
+    - This class has a static final int MAX_CREDITS field which is set to 17 (but you can lower this for testing).  
+    - Allow the student to add one or more classes, up to MAX_CREDITS classes. Do not allow the student to register for a course that is already full. Do not allow the student to register for two courses if there is a time conflict. [15 points] 
+    - Allow the student to drop all classes, or one or more specific classes [10 points] 
+    - Optional: Save the student’s schedule to a file using JSON serialization (see section 3.1 of https://www.baeldung.com/jackson-object-mapper-tutorial).  Note the Student class must have a default constructor and getters and setters for all fields for this to work. 

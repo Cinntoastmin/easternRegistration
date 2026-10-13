@@ -18,6 +18,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * @param faculty a list of faculty members who teach the course
  * @param sequenceNumber the section number of the course
  * @param courseTitle the name of the course
+ * @param maximumEnrollment the maximum number of students who may enroll
+ * @param enrollment the current number of enrolled students
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public record Course(
@@ -27,7 +29,9 @@ public record Course(
     List<MeetingFaculty> meetingsFaculty,
     List<Faculty> faculty,
     int sequenceNumber,
-    String courseTitle) {
+    String courseTitle,
+    int maximumEnrollment,
+    int enrollment) {
 
     /**
      * 
@@ -45,6 +49,62 @@ public record Course(
         public String toString() {
             return meetingTime.toString();
         }
+    }
+
+    /**
+     * Returns the total credits assigned to this course's meeting sessions.
+     */
+    public double getCredits() {
+        double total = 0.0;
+        for (MeetingFaculty meeting : safeMeetings()) {
+            if (meeting != null && meeting.meetingTime() != null) {
+                total += meeting.meetingTime().creditHourSession();
+            }
+        }
+        return total;
+    }
+
+    /** Checks whether enrollment has reached this course's maximum capacity. */
+    public boolean isFull() {
+        return maximumEnrollment > 0 && enrollment >= maximumEnrollment;
+    }
+
+    /**
+     * Checks whether this course overlaps another course's meeting schedule.
+     */
+    public boolean conflictsWith(Course other) {
+        if (other == null) {
+            return false;
+        }
+        for (MeetingFaculty firstMeeting : safeMeetings()) {
+            for (MeetingFaculty secondMeeting : other.safeMeetings()) {
+                if (firstMeeting != null && secondMeeting != null
+                        && firstMeeting.meetingTime() != null
+                        && firstMeeting.meetingTime().conflictsWith(secondMeeting.meetingTime())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Checks whether this course conflicts with any course in the given schedule.
+     */
+    public boolean hasTimeConflict(Iterable<Course> schedule) {
+        if (schedule == null) {
+            return false;
+        }
+        for (Course course : schedule) {
+            if (course != null && conflictsWith(course)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private List<MeetingFaculty> safeMeetings() {
+        return meetingsFaculty == null ? List.of() : meetingsFaculty;
     }
        
     /**
@@ -69,6 +129,28 @@ public record Course(
         boolean monday, boolean tuesday, boolean wednesday,
         boolean thursday, boolean friday, boolean saturday, boolean sunday
     ){
+        /**
+         * Checks whether this meeting overlaps another on at least one day.
+         */
+        public boolean conflictsWith(MeetingTime other) {
+            if (other == null || !sharesDayWith(other)
+                    || startTime == null || endTime == null
+                    || other.startTime == null || other.endTime == null) {
+                return false;
+            }
+            return !startTime.isAfter(other.endTime) && !other.startTime.isAfter(endTime);
+        }
+
+        private boolean sharesDayWith(MeetingTime other) {
+            return monday && other.monday
+                    || tuesday && other.tuesday
+                    || wednesday && other.wednesday
+                    || thursday && other.thursday
+                    || friday && other.friday
+                    || saturday && other.saturday
+                    || sunday && other.sunday;
+        }
+
         /**  
         * Returns a string representation of the meeting time     
         * @return the formatted meeting time string
@@ -96,7 +178,7 @@ public record Course(
             }
             end += " " + endPeriod;
 
-            return creditHourSession + " credits" + " | " + start + " - " + end + ", " + days;
+            return creditHourSession + " | " + start + " - " + end + ", " + days;
 
         }
     }; 
