@@ -21,7 +21,8 @@ public class MainMenu {
     public void run() throws Exception {
         System.out.println("Welcome to the Eastern Registration System");
         while (true) {
-            System.out.print("would you like to 'view' courses (type 'view'), or 'setup' your schedule? (type setup)? ");
+            System.out.print("Choose 'view' to view courses, 'setup' to add courses, "
+                    + "'drop' to drop courses, or 'schedule' to view your current course load: ");
 
             if (!INPUT.hasNextLine()){
                 return;
@@ -36,6 +37,16 @@ public class MainMenu {
                     setStudent(createStudent());
                 }
                 addCourses();
+            }
+            if (selection.equalsIgnoreCase("drop")) {
+                dropCourses();
+            }
+            if (selection.equalsIgnoreCase("schedule")) {
+                if (currStudent == null) {
+                    System.out.println("Please set up a student before viewing your schedule.");
+                } else {
+                    currStudent.displayCourses();
+                }
             }
         }
     }
@@ -153,6 +164,67 @@ public class MainMenu {
                 System.out.println("Could not add " + courseCode
                         + ". It may already be scheduled, full, exceed the credit limit, "
                         + "or conflict with another course.");
+            }
+        }
+    }
+
+    public void dropCourses() {
+        if (currStudent == null) {
+            System.out.println("Please set up a student before dropping courses.");
+            return;
+        }
+
+        if (currStudent.getCourses().isEmpty()) {
+            System.out.println("There are no courses in your schedule to drop.");
+            return;
+        }
+
+        System.out.println("Courses currently in your schedule:");
+        for (Course course : currStudent.getCourses()) {
+            if (course != null) {
+                System.out.println(formatCourse(course));
+            }
+        }
+
+        while (true) {
+            System.out.print("Enter a course as Subject-CourseNumber-section "
+                    + "(for example CSC-450-01), or Q to finish: ");
+            if (!INPUT.hasNextLine()) {
+                return;
+            }
+
+            String courseCode = INPUT.nextLine().trim();
+            if (courseCode.equalsIgnoreCase("q")) {
+                return;
+            }
+
+            String[] parts = courseCode.split("-", -1);
+            if (parts.length != 3
+                    || parts[0].isBlank()
+                    || parts[1].isBlank()
+                    || parts[2].isBlank()) {
+                System.out.println("Please use the format subject-courseNumber-sequenceNumber, "
+                        + "for example CSC-450-01.");
+                continue;
+            }
+
+            String subject = parts[0].trim();
+            String courseNumber = parts[1].trim();
+            String sequenceNumber = parts[2].trim();
+            Course course = currStudent.getCourses().stream()
+                    .filter(Objects::nonNull)
+                    .filter(scheduledCourse -> subject.equalsIgnoreCase(scheduledCourse.subject())
+                            && courseNumber.equalsIgnoreCase(scheduledCourse.courseNumber())
+                            && sequenceNumber.equalsIgnoreCase(scheduledCourse.sequenceNumber()))
+                    .findFirst()
+                    .orElse(null);
+
+            if (course == null) {
+                System.out.println("Course " + courseCode + " is not in your schedule.");
+            } else if (currStudent.dropCourse(course)) {
+                System.out.println("Dropped " + courseCode + " from your schedule.");
+            } else {
+                System.out.println("Could not drop " + courseCode + " from your schedule.");
             }
         }
     }

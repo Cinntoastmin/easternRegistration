@@ -211,6 +211,7 @@ public record Course(
         StringBuilder sb = new StringBuilder();
         sb.append(subject).append("-").append(courseNumber).append("-").append(sequenceNumber);
         sb.append(" " + courseTitle);
+        sb.append(" | ").append(enrollment).append("/").append(maximumEnrollment);
 
         if (meetingsFaculty != null && !meetingsFaculty.isEmpty()) {
             String meetings = meetingsFaculty.stream()
