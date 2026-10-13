@@ -18,7 +18,13 @@ public class EasternRegistration {
      * @throws Exception if cannot retreive courses
      */
     public static void main(String[] args) throws Exception {
-        
+        EasternSchedule easternSchedule = new EasternSchedule();
+        MainMenu m = new MainMenu(easternSchedule);
+        m.run();
+
+        /*
+        Demo Code: 
+         
         // Create EasternSchedule object
         EasternSchedule easternSchedule = new EasternSchedule();
     
@@ -67,7 +73,8 @@ public class EasternRegistration {
             // meetingsFaculty is a list, we use the get method for this.
             System.out.println(c.meetingsFaculty().get(0));
             break;
-        }        
+        }
+        */        
     }
 
 

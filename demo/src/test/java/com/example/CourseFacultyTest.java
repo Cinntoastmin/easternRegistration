@@ -84,4 +84,60 @@ public class CourseFacultyTest {
         assertEquals("3.0 | 11:00 - 11:50 AM, M",
                 course.meetingsFaculty().get(0).meetingTime().toString());
     }
+
+    @Test
+    public void courseToStringHandlesMissingMeetingStartTime() throws Exception {
+        String json = """
+                {
+                  "subject": "CSC",
+                  "courseNumber": "490",
+                  "sequenceNumber": 1,
+                  "courseTitle": "Senior Seminar",
+                  "meetingsFaculty": [
+                    {
+                      "meetingTime": {
+                        "beginTime": null,
+                        "endTime": "1150",
+                        "creditHourSession": 3.0,
+                        "monday": true
+                      }
+                    }
+                  ]
+                }
+                """;
+
+        Course course = new ObjectMapper()
+                .registerModule(new JavaTimeModule())
+                .readValue(json, Course.class);
+
+        assertTrue(course.toString().contains("3.0 | time unavailable, M"));
+    }
+
+    @Test
+    public void courseToStringHandlesMissingMeetingEndTime() throws Exception {
+        String json = """
+                {
+                  "subject": "CSC",
+                  "courseNumber": "490",
+                  "sequenceNumber": 1,
+                  "courseTitle": "Senior Seminar",
+                  "meetingsFaculty": [
+                    {
+                      "meetingTime": {
+                        "beginTime": "1100",
+                        "endTime": null,
+                        "creditHourSession": 3.0,
+                        "monday": true
+                      }
+                    }
+                  ]
+                }
+                """;
+
+        Course course = new ObjectMapper()
+                .registerModule(new JavaTimeModule())
+                .readValue(json, Course.class);
+
+        assertTrue(course.toString().contains("3.0 | time unavailable, M"));
+    }
 }

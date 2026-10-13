@@ -4,6 +4,7 @@ import java.util.List;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -28,7 +29,7 @@ public record Course(
     String courseNumber, 
     List<MeetingFaculty> meetingsFaculty,
     List<Faculty> faculty,
-    int sequenceNumber,
+    String sequenceNumber,
     String courseTitle,
     int maximumEnrollment,
     int enrollment) {
@@ -60,6 +61,13 @@ public record Course(
             if (meeting != null && meeting.meetingTime() != null) {
                 total += meeting.meetingTime().creditHourSession();
             }
+        }
+        if (total <= 0.0 && meetingsFaculty != null && !meetingsFaculty.isEmpty()) {
+            return meetingsFaculty.stream()
+                .map(MeetingFaculty::meetingTime)
+                .filter(Objects::nonNull)
+                .mapToDouble(MeetingTime::creditHourSession)
+                .sum();
         }
         return total;
     }
@@ -168,6 +176,13 @@ public record Course(
 
             DateTimeFormatter timeFormat = DateTimeFormatter.ofPattern("h:mm", Locale.US);
             DateTimeFormatter periodFormat = DateTimeFormatter.ofPattern("a", Locale.US);
+            if (startTime == null || endTime == null) {
+                if (days.length() > 0) {
+                    return creditHourSession + " | time unavailable, " + days;
+                }
+                return creditHourSession + " | time unavailable";
+            }
+
             String start = startTime.format(timeFormat);
             String end = endTime.format(timeFormat);
             String startPeriod = startTime.format(periodFormat);
@@ -178,7 +193,11 @@ public record Course(
             }
             end += " " + endPeriod;
 
-            return creditHourSession + " | " + start + " - " + end + ", " + days;
+            String base = creditHourSession + " | " + start + " - " + end;
+            if (days.length() > 0) {
+                return base + ", " + days;
+            }
+            return base;
 
         }
     }; 
@@ -192,10 +211,11 @@ public record Course(
         StringBuilder sb = new StringBuilder();
         sb.append(subject).append("-").append(courseNumber).append("-").append(sequenceNumber);
         sb.append(" " + courseTitle);
+        sb.append(" | ").append(enrollment).append("/").append(maximumEnrollment);
 
         if (meetingsFaculty != null && !meetingsFaculty.isEmpty()) {
             String meetings = meetingsFaculty.stream()
-                .map(Object::toString)
+                .map(MeetingFaculty::toString)
                 .collect(Collectors.joining(", "));
             sb.append(" | ").append(meetings);
         }
@@ -203,8 +223,11 @@ public record Course(
         if (faculty != null && !faculty.isEmpty()) {
             String facultyNames = faculty.stream()
                 .map(Faculty::displayName)
+                .filter(name -> name != null && !name.isBlank())
                 .collect(Collectors.joining(", "));
-            sb.append(" | ").append(facultyNames);
+            if (!facultyNames.isEmpty()) {
+                sb.append(" | ").append(facultyNames);
+            }
         }
 
         return sb.toString();

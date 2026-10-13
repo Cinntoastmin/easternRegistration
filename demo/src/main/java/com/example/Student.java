@@ -11,7 +11,7 @@ import java.util.Objects;
 public class Student {
     public static final int MAX_CREDITS = 17;
 
-    private int id;
+    private String id;
     private String firstName;
     private String lastName;
     private ArrayList<Course> courses;
@@ -23,11 +23,11 @@ public class Student {
     /**
      * Creates a student with the given identity.
      * 
-     * @param id: a numerical identifier for the student
+     * @param id a string identifier for the student
      * @param firstName the students first name
      * @param lastName the studnets last name
      */
-    public Student(int id, String firstName, String lastName) {
+    public Student(String id, String firstName, String lastName) {
         this();
         this.id = id;
         this.firstName = firstName;
@@ -39,7 +39,7 @@ public class Student {
      * 
      * @return student ID
      */
-    public int getId() {
+    public String getId() {
         return id;
     }
 
@@ -48,7 +48,7 @@ public class Student {
      * 
      * @param id new student ID
      */
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -272,7 +272,7 @@ public class Student {
             return false;
         }
         Student student = (Student) o;
-        return id == student.id
+        return Objects.equals(id, student.id)
                 && Objects.equals(firstName, student.firstName)
                 && Objects.equals(lastName, student.lastName)
                 && Objects.equals(courses, student.courses);

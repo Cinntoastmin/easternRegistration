@@ -2,6 +2,10 @@
 skinparam classAttributeIconSize 0
 hide circle
 
+class EasternRegistration {
+  +{static} main(args: String[]): void
+}
+
 class EasternSchedule {
   -{static} BASE: String = "https://reg-prod.ec.easternct.edu/StudentRegistrationSsb"
   -term: String
@@ -10,36 +14,44 @@ class EasternSchedule {
   --
   +EasternSchedule()
   +getTerm(): String
+  +getAvailableTerms(): ArrayList<Term>
+  +queryCourseBySubject(subject: String): ArrayList<Course>
   -retrieveTerms(): String
   -parseTerms(content: String): ArrayList<Term>
   -parseCourses(content: String): ArrayList<Course>
-  +getAvailableTerms(): ArrayList<Term>
   -postTerm(): String
   -createCacheFile(subject: String): Path
   -cacheCourses(subject: String): void
-  +queryCourseBySubject(subject: String): ArrayList<Course>
 }
 
 class MainMenu {
-    -schedule: EasternSchedule
-    --
-    +MainMenu(schedule: EasternSchedule)
-    +run(): void
-    -displayCoursesBySubject(subject: String): void
-    -formatCourse(course: Course): String
+  -schedule: EasternSchedule
+  -currStudent: Student
+  -{static} INPUT: Scanner
+  --
+  +MainMenu(schedule: EasternSchedule)
+  +run(): void
+  +viewCourses(): void
+  +createStudent(): Student
+  +addCourses(): void
+  +dropCourses(): void
+  -setStudent(s: Student): void
+  -displayCoursesBySubject(subject: String): void
+  -displayCoursesBySubjectAndNumber(subject: String, courseNumber: String): void
+  -formatCourse(course: Course): String
 }
 
 class Student {
-  -{static} MAX_CREDITS: int = 17
-  -id: int
+  +{static} MAX_CREDITS: int = 17
+  -id: String
   -firstName: String
   -lastName: String
   -courses: ArrayList<Course>
   --
   +Student()
-  +Student(id: int, firstName: String, lastName: String)
-  +getId(): int
-  +setId(id: int): void
+  +Student(id: String, firstName: String, lastName: String)
+  +getId(): String
+  +setId(id: String): void
   +getFirstName(): String
   +setFirstName(firstName: String): void
   +getLastName(): String
@@ -52,37 +64,31 @@ class Student {
   +dropCourses(courses: Course[]): boolean
   +dropAllCourses(): void
   +displayCourses(): void
+  +getTotalCredits(): double
+  +alreadyEnrolled(course: Course): boolean
+  +wouldExceedMaxCredits(course: Course): boolean
 }
 
-record Course {
-  -id : String
-  -subject: String
-  -courseNumber: String
-  -meetingsFaculty: List<MeetingFaculty>
-  -faculty: List<Faculty>
-  -sequenceNumber: int
-  -courseTitle: String
+record Course{
+  -id: String,
+  -subject: String,
+  -courseNumber: String,
+  -meetingsFaculty: List<MeetingFaculty>,
+  -faculty: List<Faculty>,
+  -sequenceNumber: String,
+  -courseTitle: String,
+  -maximumEnrollment: int,
+  -enrollment: int
+  --
+  +getCredits(): double
+  +isFull(): boolean
+  +conflictsWith(other: Course): boolean
+  +hasTimeConflict(schedule: Iterable<Course>): boolean
+  +toString(): String
 }
 
 record Faculty {
   -displayName: String
-}
-
-record MeetingFaculty {
-  -meetingTime: MeetingTime
-}
-
-record MeetingTime {
-  -startTime: LocalTime
-  -endTime: LocalTime
-  -creditHourSession: double
-  -monday: boolean
-  -tuesday: boolean
-  -wednesday: boolean
-  -thursday: boolean
-  -friday: boolean
-  -saturday: boolean
-  -sunday: boolean
 }
 
 record Term {
@@ -90,17 +96,39 @@ record Term {
   -description: String
 }
 
-'Aggregation and composition
-MeetingFaculty "1" o-- "1" MeetingTime : has a >
-Course "1" 0-- "0*" MeetingFaculty: has a >
-Course "1" 0-- "1*" Faculty: taught by >
-Student "1" *-- "0*" Course : enrolls in >
-MainMenu ..> EasternSchedule : queries courses by subject
-MainMenu ..> Course : formats and displays
-Student ..> Course : adds and drops
+record MeetingFaculty {
+  -meetingTime: MeetingTime
+}
 
-'Dependencies
-EasternSchedule ..> Term : uses
-EasternSchedule ..> Course : uses
+record MeetingTime{
+  -startTime: LocalTime,
+  -endTime: LocalTime,
+  -creditHourSession: double,
+  -monday: boolean,
+  -tuesday: boolean,
+  -wednesday: boolean,
+  -thursday: boolean,
+  -friday: boolean,
+  -saturday: boolean,
+  -sunday: boolean
+  --
+  +conflictsWith(other: MeetingTime): boolean
+  +sharesDayWith(other: MeetingTime): boolean
+  +toString(): String
+}
+
+EasternRegistration ..> MainMenu : starts
+EasternRegistration ..> EasternSchedule : creates
+
+MainMenu --> EasternSchedule : queries cached/remote course data
+MainMenu --> Student : manages current student
+MainMenu ..> Course : displays / filters / formats
+
+Student "1" *-- "0..*" Course : schedules
+Course "1" *-- "0..*" MeetingFaculty : contains
+MeetingFaculty "1" *-- "1" MeetingTime : describes
+Course "1" *-- "0..*" Faculty : taught by
+EasternSchedule ..> Term : reads available terms
+EasternSchedule ..> Course : parses course data
 
 @enduml
