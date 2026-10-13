@@ -67,10 +67,11 @@ public class MainMenu {
     }
 
     /**
-     * lets the user view courses by subject
+     * Lets the user view courses by subject, optionally filtered by course number.
      * 
      * @throws Exception from a used method
-     * @see displayCourseBySubject
+     * @see #displayCoursesBySubject(String)
+     * @see #displayCoursesBySubjectAndNumber(String, String)
      */
     public void viewCourses() throws Exception{
         System.out.print("Enter a subject code to view courses (or Q to quit): ");
@@ -84,10 +85,23 @@ public class MainMenu {
         }
         if (subject.isEmpty()) {
             System.out.println("Please enter a subject code.");
-            
+            return;
         }
 
-        displayCoursesBySubject(subject);
+        System.out.print("Enter a course number to filter, or press Enter to view all: ");
+        if (!INPUT.hasNextLine()) {
+            return;
+        }
+
+        String courseNumber = INPUT.nextLine().trim();
+        if (courseNumber.equalsIgnoreCase("q")) {
+            return;
+        }
+        if (courseNumber.isEmpty()) {
+            displayCoursesBySubject(subject);
+        } else {
+            displayCoursesBySubjectAndNumber(subject, courseNumber);
+        }
     }
 
     /**
@@ -136,6 +150,30 @@ public class MainMenu {
         ArrayList<Course> courses = schedule.queryCourseBySubject(subject);
         if (courses.isEmpty()) {
             System.out.println("No courses found for " + subject.toUpperCase(Locale.ROOT) + ".");
+            return;
+        }
+
+        for (Course course : courses) {
+            System.out.println(formatCourse(course));
+        }
+    }
+
+    /**
+     * Displays courses matching the given subject and course number.
+     *
+     * @param subject the subject code to search
+     * @param courseNumber the course number to search
+     * @throws Exception if the course query fails
+     */
+    private void displayCoursesBySubjectAndNumber(String subject, String courseNumber) throws Exception {
+        ArrayList<Course> courses = schedule.queryCourseBySubject(subject).stream()
+                .filter(Objects::nonNull)
+                .filter(course -> courseNumber.equalsIgnoreCase(course.courseNumber()))
+                .collect(java.util.stream.Collectors.toCollection(ArrayList::new));
+
+        if (courses.isEmpty()) {
+            System.out.println("No courses found for " + subject.toUpperCase(Locale.ROOT)
+                    + " " + courseNumber + ".");
             return;
         }
 
