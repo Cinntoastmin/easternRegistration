@@ -245,6 +245,10 @@ public class Student {
         return getTotalCredits() + course.getCredits() > MAX_CREDITS;
     }
 
+    /**    (non-Javadoc)
+     * 
+     * @see java.lang.Object#toString()
+     */
     @Override
     public String toString() {
         return "Student{" +
@@ -255,6 +259,10 @@ public class Student {
                 '}';
     }
 
+    /**    (non-Javadoc)
+     * 
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -270,6 +278,10 @@ public class Student {
                 && Objects.equals(courses, student.courses);
     }
 
+    /**    (non-Javadoc)
+     * 
+     * @see java.lang.Object#hashCode()
+     */
     @Override
     public int hashCode() {
         return Objects.hash(id, firstName, lastName, courses);
