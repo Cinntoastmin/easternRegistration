@@ -17,10 +17,6 @@ public class MainMenu {
         this.schedule = Objects.requireNonNull(schedule, "schedule");
     }
 
-    public static void main(String[] args) throws Exception {
-        new MainMenu(new EasternSchedule()).run();
-    }
-
     public void run() throws Exception {
         while (true) {
             System.out.print("Enter a subject code to view courses (or Q to quit): ");
@@ -54,6 +50,8 @@ public class MainMenu {
     }
 
     private String formatCourse(Course course) {
+        return course.toString();
+        /* 
         StringBuilder formatted = new StringBuilder()
             .append(course.subject())
             .append(' ')
@@ -118,6 +116,6 @@ public class MainMenu {
             }
         }
 
-        return formatted.toString();
+        return formatted.toString();*/
     }
 }

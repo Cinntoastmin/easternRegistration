@@ -168,6 +168,10 @@ public record Course(
 
             DateTimeFormatter timeFormat = DateTimeFormatter.ofPattern("h:mm", Locale.US);
             DateTimeFormatter periodFormat = DateTimeFormatter.ofPattern("a", Locale.US);
+            if (startTime == null || endTime == null) {
+                return creditHourSession + " | time unavailable, " + days;
+            }
+
             String start = startTime.format(timeFormat);
             String end = endTime.format(timeFormat);
             String startPeriod = startTime.format(periodFormat);
